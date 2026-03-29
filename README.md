@@ -20,10 +20,23 @@ If you are new to neural networks, this ["Dummy's Guide"](https://x.com/hooeem/s
 
 ## Quick start
 
-**Requirements:** A single NVIDIA GPU (tested on H100), Python 3.10+, [uv](https://docs.astral.sh/uv/).
+**Requirements:** A single NVIDIA GPU with CUDA support, Python 3.10+, [uv](https://docs.astral.sh/uv/).
+
+**This fork is configured for a Lenovo Legion 7 with RTX 2070 Super Max-Q (8GB VRAM) running CachyOS Linux.** See [README.linux.md](README.linux.md) for hardware-specific setup details and troubleshooting.
+
+### Automated Setup (Recommended)
 
 ```bash
+git clone https://github.com/bobdavis84/autoresearch.git
+cd autoresearch
+./setup.sh
+```
 
+The setup script verifies your NVIDIA GPU, installs `uv` if needed, and runs `uv sync`.
+
+### Manual Setup
+
+```bash
 # 1. Install uv project manager (if you don't already have it)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
@@ -56,6 +69,8 @@ prepare.py      — constants, data prep + runtime utilities (do not modify)
 train.py        — model, optimizer, training loop (agent modifies this)
 program.md      — agent instructions
 pyproject.toml  — dependencies
+setup.sh        — one-shot Linux setup script (GPU verification + dependency install)
+README.linux.md — hardware-specific Linux setup guide
 ```
 
 ## Design choices
@@ -66,9 +81,20 @@ pyproject.toml  — dependencies
 
 ## Platform support
 
-This code currently requires that you have a single NVIDIA GPU. In principle it is quite possible to support CPU, MPS and other platforms but this would also bloat the code. I'm not 100% sure that I want to take this on personally right now. People can reference (or have their agents reference) the full/parent nanochat repository that has wider platform support and shows the various solutions (e.g. a Flash Attention 3 kernels fallback implementation, generic device support, autodetection, etc.), feel free to create forks or discussions for other platforms and I'm happy to link to them here in the README in some new notable forks section or etc.
+This fork is configured for a **Lenovo Legion 7 with NVIDIA RTX 2070 Super Max-Q** running CachyOS (Arch Linux). It requires a single NVIDIA GPU with CUDA support.
 
-Seeing as there seems to be a lot of interest in tinkering with autoresearch on much smaller compute platforms than an H100, a few extra words. If you're going to try running autoresearch on smaller computers (Macbooks etc.), I'd recommend one of the forks below. On top of this, here are some recommendations for how to tune the defaults for much smaller models for aspiring forks:
+### Notes for this hardware
+
+- **VRAM**: 8GB — the default config should fit, but you may need to reduce `DEVICE_BATCH_SIZE` or `DEPTH` in `train.py` if you hit OOM.
+- **Flash Attention**: The code uses `kernels-community/flash-attn3` as a fallback for non-Hopper GPUs (`train.py:22-24`). This should work on Turing (SM 7.5) but if it doesn't, the agent can experiment with alternatives.
+- **MFU reporting**: The MFU percentage in training logs is calibrated against H100 peak FLOPS (`train.py:463`), so it will appear very low on the RTX 2070 Super. This is cosmetic — val_bpb is the metric that matters.
+- **Triton**: Added as an explicit dependency (sourced from the PyTorch CUDA 12.8 index) for GPU kernel compilation on Linux.
+
+For the upstream project with broader platform support (H100, MacOS, Windows, AMD), see [karpathy/autoresearch](https://github.com/karpathy/autoresearch).
+
+### Tuning for smaller GPUs
+
+If you're running on smaller compute than an H100, here are some recommendations:
 
 1. To get half-decent results I'd use a dataset with a lot less entropy, e.g. this [TinyStories dataset](https://huggingface.co/datasets/karpathy/tinystories-gpt4-clean). These are GPT-4 generated short stories. Because the data is a lot narrower in scope, you will see reasonable results with a lot smaller models (if you try to sample from them after training).
 2. You might experiment with decreasing `vocab_size`, e.g. from 8192 down to 4096, 2048, 1024, or even - simply byte-level tokenizer with 256 possibly bytes after utf-8 encoding.
@@ -77,8 +103,6 @@ Seeing as there seems to be a lot of interest in tinkering with autoresearch on 
 5. In `train.py`, the primary single knob that controls model complexity is the `DEPTH` (default 8, here). A lot of variables are just functions of this, so e.g. lower it down to e.g. 4.
 6. You'll want to most likely use `WINDOW_PATTERN` of just "L", because "SSSL" uses alternating banded attention pattern that may be very inefficient for you. Try it.
 7. You'll want to lower `TOTAL_BATCH_SIZE` a lot, but keep it powers of 2, e.g. down to `2**14` (~16K) or so even, hard to tell.
-
-I think these would be the reasonable hyperparameters to play with. Ask your favorite coding agent for help and copy paste them this guide, as well as the full source code.
 
 ## Notable forks
 

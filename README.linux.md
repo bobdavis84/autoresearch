@@ -81,9 +81,10 @@ Open `program.md` for agent instructions, then launch your preferred coding agen
 ## Performance Expectations
 
 With your RTX 2070 Super Mobile (8GB):
-- **~10-12 experiments per hour**
+- **~10-12 experiments per hour** (each experiment is a fixed 5-minute training run)
 - **~100 experiments overnight**
-- Flash Attention 3 will auto-detect and optimize for your Turing GPU
+- The code uses `kernels-community/flash-attn3` for non-Hopper GPUs (see `train.py:22-24`)
+- **MFU % in logs will appear very low** — it's calibrated against H100 peak FLOPS, not your GPU. Ignore it; val_bpb is the metric that matters.
 
 ## Troubleshooting
 
@@ -109,15 +110,15 @@ sudo modprobe nvidia
 sudo systemctl restart sddm  # if using Wayland/X11
 ```
 
-## Architecture-Specific Optimizations
+## Architecture-Specific Notes
 
-Your Turing GPU (TU104) supports:
-- ✅ FP16 mixed precision training
+Your Turing GPU (TU104, SM 7.5) supports:
+- ✅ BF16/FP16 mixed precision training
 - ✅ Tensor Cores (accelerates matrix operations)
-- ✅ Flash Attention (auto-enabled)
 - ✅ CUDA 12.8 (full compatibility)
+- ⚠️ Flash Attention 3 via community fallback kernel (`kernels-community/flash-attn3`) — if this fails at runtime, the agent can experiment with alternatives
 
-The default configuration is already optimized for your hardware.
+The default configuration should work on your hardware. If you hit OOM, reduce `DEVICE_BATCH_SIZE` or `DEPTH` in `train.py`.
 
 ## Next Steps
 

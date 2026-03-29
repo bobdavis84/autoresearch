@@ -8,16 +8,32 @@ wheels/
 
 # Virtual environments
 .venv
+env/
+venv/
+
+# Project directories
 worktrees/
 results/
 queue/
+dev/
 
 # Agent prompt files (generated per-session by launchers)
 CLAUDE.md
 AGENTS.md
 
-# Experimental code/artifacts
-dev/
-
-# Results file
+# Results file (do not commit per program.md)
 results.tsv
+
+# Logs
+*.log
+
+# Editor / OS
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local

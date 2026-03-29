@@ -1,23 +1,39 @@
-# Python-generated files
+```
+# Dependencies
+uv.lock
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Python
 __pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
-
-# Virtual environments
-.venv
-worktrees/
-results/
-queue/
-
-# Agent prompt files (generated per-session by launchers)
-CLAUDE.md
-AGENTS.md
-
-# Experimental code/artifacts
-dev/
-
-# Results file
-results.tsv
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.venv.bak/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+*.pot
+*.po
+TAGS
+ID
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+```

@@ -16,15 +16,14 @@ Your Lenovo Legion 7 with RTX 2070 Super Mobile is **fully compatible** with thi
 ### Option 1: Use the Setup Script (Recommended)
 
 ```bash
-cd /workspace
+cd ~/autoresearch  # or wherever you cloned the repo
 ./setup.sh
 ```
 
 This script will:
-1. Detect your NVIDIA GPU
+1. Verify your NVIDIA GPU is available
 2. Install `uv` package manager if needed
-3. Configure PyTorch with CUDA support
-4. Install all dependencies
+3. Install all dependencies (PyTorch with CUDA support)
 
 ### Option 2: Manual Installation
 
@@ -32,7 +31,6 @@ This script will:
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
-source $HOME/.local/bin/env
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
@@ -49,7 +47,7 @@ Expected output should show your RTX 2070 Super.
 #### Step 3: Install Dependencies
 
 ```bash
-cd /workspace
+cd ~/autoresearch  # or wherever you cloned the repo
 uv sync
 ```
 

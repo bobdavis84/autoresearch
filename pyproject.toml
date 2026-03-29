@@ -29,15 +29,3 @@ triton = [
 name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
 explicit = true
-
-# Optional: CPU-only torch for systems without GPU
-# Uncomment below and comment out the CUDA sources above if needed
-# torch = [
-#     { index = "pytorch-cpu" },
-# ]
-# triton = []  # triton not needed for CPU-only
-
-# [[tool.uv.index]]
-# name = "pytorch-cpu"
-# url = "https://download.pytorch.org/whl/cpu"
-# explicit = true

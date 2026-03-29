@@ -94,7 +94,7 @@ With your RTX 2070 Super Mobile (8GB):
 The environment has limited disk space. Clear cache and retry:
 
 ```bash
-rm -rf /root/.cache/uv
+rm -rf $HOME/.cache/uv
 uv sync --no-cache
 ```
 
